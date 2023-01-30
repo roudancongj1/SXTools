@@ -1,0 +1,16 @@
+server:
+  port: 8091
+
+sics:
+  life:
+    #生产
+    serverAdd: http://10.0.11.111:9090/SicsServerQHR/SicsWSServlet
+    #测试
+    testServerAdd: http://10.0.51.111:9080/SicsServer/SicsWSServlet
+
+spring:
+  application:
+    name: "sxt-serv"
+
+
+
