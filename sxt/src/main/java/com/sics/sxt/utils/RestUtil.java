@@ -1,6 +1,6 @@
 package com.sics.sxt.utils;
 
-import com.sics.sxt.config.RespEntity;
+import com.sics.sxt.common.RespEntity;
 import com.sics.sxt.config.ConfUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -35,7 +35,12 @@ public class RestUtil {
         headers.add("Content-Type", "application/json;charset=utf8");
         headers.add("SOAPAction", "http://www.SicsWsBusinessPartnerEntryPoint.com/SicsWsBusinessPartnerEntryPoint-interface/");
         HttpEntity<Object> entity = new HttpEntity<>(xml, headers);
-        return  new RespEntity<>(tp.exchange(url, HttpMethod.POST, entity, String.class));
+        RespEntity<String> respEntity = new RespEntity<>(tp.exchange(url, HttpMethod.POST, entity, String.class));
+        if (respEntity.isOK())
+            log.info("请求访问成功");
+        else
+            System.out.println(entity.getBody());
+        return respEntity;
 
     }
 

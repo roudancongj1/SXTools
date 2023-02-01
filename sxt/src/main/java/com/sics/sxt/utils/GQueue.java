@@ -12,13 +12,36 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Component
-public class AsyncUtil {
+public class GQueue {
 
-    public void ss() throws InterruptedException {
+    private static LinkedBlockingQueue<Object> queue;
+
+    private GQueue(){
+        queue = new LinkedBlockingQueue<>(10);
+    }
+
+    public static void set(Object obj){
+        try {
+            //offer add
+            queue.put(obj);
+        } catch (InterruptedException e) {
+            log.error("队列存入异常");
+            e.printStackTrace();
+        }
+    }
+
+    public static Object get(){
+        //poll take
+        return queue.remove();
+    }
+
+    /**
+     * Producer/Consumer
+     * */
+    public void queue() throws InterruptedException {
         LinkedBlockingQueue<LFBusiness> queue = new LinkedBlockingQueue<>(1);
 
         List<Object> list = new ArrayList<>();//ExcelUtil.readExcelObj(file, LFBusiness.class);
-
 
         AtomicBoolean end = new AtomicBoolean(false);
         Thread thread1 = new Thread(()-> {
@@ -62,22 +85,10 @@ public class AsyncUtil {
             System.out.println("join异常");
         }
 
-
-                    /*while (thread1.isAlive() || thread2.isAlive()) {
-                        ////只要两个线程中有任何一个线程还在活动，主线程就不会往下执行
-                        log.info("当前还有线程在执行");
-                    }*/
+        /*while (thread1.isAlive() || thread2.isAlive()) {
+            ////只要两个线程中有任何一个线程还在活动，主线程就不会往下执行
+            log.info("当前还有线程在执行");
+        }*/
     }
 
-    private void aa() throws InterruptedException {
-        log.info("aaaaaaaaaaaaaaaa");
-        Thread.sleep(2000);
-        log.info("aaaaaaaaaaaaaaaaend");
-    }
-
-    private void bb() throws InterruptedException {
-        log.info("bbbbbbbbbbbb");
-        Thread.sleep(2000);
-        log.info("bbbbbbbbbbbbend");
-    }
 }

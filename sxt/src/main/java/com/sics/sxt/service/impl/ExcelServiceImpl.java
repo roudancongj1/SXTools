@@ -1,18 +1,17 @@
 package com.sics.sxt.service.impl;
 
-import com.sics.sxt.config.RespEntity;
+import com.sics.sxt.common.RespEntity;
 import com.sics.sxt.pojo.bo.FlushBusiness;
 import com.sics.sxt.pojo.bo.LFBusiness;
 import com.sics.sxt.pojo.bo.PCBusiness;
 import com.sics.sxt.pojo.vo.ER;
 import com.sics.sxt.service.ExcelService;
 import com.sics.sxt.service.XmlService;
+import com.sics.sxt.utils.BusinessUtil;
 import com.sics.sxt.utils.ExcelUtil;
 import com.sics.sxt.utils.RestUtil;
-import com.sics.sxt.utils.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -45,17 +44,16 @@ public class ExcelServiceImpl implements ExcelService {
         for (Object o : paramList) {
             if( o instanceof LFBusiness lfBusiness){
                 if (lfBusiness.getSectionHierarchy() == 0){
-                    getAllBP(lfBusiness,paramList);
+                    BusinessUtil.getAllBP(lfBusiness,paramList);
                     RespEntity<String> entity = RestUtil.sendLf(lfBusinessXmlService.creat(lfBusiness));
                     //if ( entity.isOK() || XmlUtil.errorMsgIsIdExist(entity.getBody())){
                     if (entity.isOK()){
-                        log.info("请求访问成功");
                         erList.add(new ER("Y"));
                         addERList(RestUtil.sendLf(plConditionXmlService.creat(o)),erList,"PlCondition create error: "+o);
                         addERList(RestUtil.sendLf(dConditionXmlService.creat(o)),erList,"DCondition create error: "+o);
                         addERList(RestUtil.sendLf(lConditionXmlService.creat(o)),erList,"LCondition create error: "+o);
                     }else {
-                        erList.add(new ER("N",entity.getBody(),o.toString()));
+                        erList.add(new ER("N",entity.getBody(),"LFBusiness create error"+o));
                         System.out.println(entity.getBody());
                     }
                 }else {
@@ -76,21 +74,6 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    private void getAllBP(LFBusiness currentBusiness, List<Object> paramList){
-        if (paramList.iterator().next() instanceof LFBusiness) {
-            for (int i = currentBusiness.getIndex() + 1; i < paramList.size(); i++) {
-                LFBusiness lfBusiness = (LFBusiness) paramList.get(i);
-                if (lfBusiness.getSectionHierarchy() == 0)
-                    break;
-                if (StringUtils.hasText(lfBusiness.getProduct())) {
-                    currentBusiness.getProductList().add(lfBusiness.getProduct());
-                }
-            }
-        }else if (paramList.iterator().next() instanceof PCBusiness pcBusiness) {
-            System.out.println(pcBusiness);
-        }
-
-    }
 
     @Override
     public void getRequestToExcel(List<ER> list) throws IOException {
@@ -99,11 +82,9 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void addERList(RespEntity<String> entity, List<ER> erList,String errMsg){
         if (entity.isOK()){
-            log.info("请求访问成功");
             erList.add(new ER("Y"));
         }
         else{
-            System.out.println(entity.getBody());
             erList.add(new ER("N",entity.getBody(),errMsg));
         }
     }

@@ -1,4 +1,4 @@
-package com.sics.sxt.config;
+package com.sics.sxt.common;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;

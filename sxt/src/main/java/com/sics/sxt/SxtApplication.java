@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @Home http://localhost:port/
  * @Auth: Gao
- * @Date: 2022-12-12
  * */
 @SpringBootApplication
 public class SxtApplication {
