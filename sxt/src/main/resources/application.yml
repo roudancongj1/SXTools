@@ -11,6 +11,21 @@ sics:
 spring:
   application:
     name: "sxt-serv"
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    #url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
+    url: jdbc:oracle:thin:@localhost:1521/ROOT
+    #name: SICSLIFECEDED_DEBUG1
+    #password: SICSLIFECEDED_DEBUG1
+    name: ROOT
+    password: root
 
-
+mybatis-plus:
+  type-aliases-package: com.sics.sxt.pojo.*
+    #开启sql显示
+    #configuration:
+    #  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #驼峰命名
+  configuration:
+    map-underscore-to-camel-case: true
 

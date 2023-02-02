@@ -1,5 +1,7 @@
 package com.sics.sxt.pojo.po;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serial;
@@ -7,31 +9,31 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
-//@TableName("REQ_LOG")
+@TableName("REQ_LOG")
 public class LogDB implements Serializable{
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    //@TableField("REQ_ID")
+    @TableField("REQ_ID")
     private String reqId;
 
-    //@TableField("STATUS")
+    @TableField("STATUS")
     private String status;
 
-    //@TableField("INFO")
+    @TableField("INFO")
     private String info;
 
-    //@TableField("CREATE_DATE")
+    @TableField("CREATE_DATE")
     private Timestamp createDate;
 
-    //@TableField("MESSAGE")
+    @TableField("MESSAGE")
     private String message;
 
-    //@TableField("BUSINESS_ID")
+    @TableField("BUSINESS_ID")
     private String businessId;
 
-    //@TableField("WORKSHEET_ID")
+    @TableField("WORKSHEET_ID")
     private String worksheetId;
 
 }

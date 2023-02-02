@@ -1,20 +1,19 @@
 package com.sics.sxt.service.impl;
 
 import com.sics.sxt.common.RespEntity;
+import com.sics.sxt.dao.LogDBMapper;
 import com.sics.sxt.pojo.bo.LFBusiness;
 import com.sics.sxt.pojo.bo.PCBusiness;
 import com.sics.sxt.pojo.po.LogDB;
-import com.sics.sxt.pojo.vo.ER;
 import com.sics.sxt.service.ApiService;
 import com.sics.sxt.service.XmlService;
 import com.sics.sxt.utils.BusinessUtil;
 import com.sics.sxt.utils.RestUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +27,8 @@ public class ApiServiceImpl implements ApiService {
     private final XmlService sectionXmlService;
     private final XmlService classificationXmlService;
     private final XmlService flushBusinessXmlService;
+    private final LogDBMapper logDBMapper;
+
 
 
     @Override
@@ -35,6 +36,7 @@ public class ApiServiceImpl implements ApiService {
         if (lfBusinessList.isEmpty()){
             log.warn("upload is successful but data is null");
             //logDBMapper.save(new LogDB("upload is successful but data is null"));
+            //logDBMapper.aa();
         }
         lfBusinessList.forEach(lfBusiness -> {
             if (lfBusiness.getSectionHierarchy() == 0){
@@ -79,12 +81,13 @@ public class ApiServiceImpl implements ApiService {
     }
 
     private ApiServiceImpl(@Qualifier("lfBusinessXmlServiceImpl") XmlService lfBusinessXmlService,
-                             @Qualifier("plConditionXmlServiceImpl") XmlService plConditionXmlService,
-                             @Qualifier("DConditionXmlServiceImpl") XmlService DConditionXmlService,
-                             @Qualifier("LConditionXmlServiceImpl") XmlService LConditionXmlService,
-                             @Qualifier("sectionXmlServiceImpl") XmlService sectionXmlService,
-                             @Qualifier("classificationXmlServiceImpl") XmlService classificationXmlService,
-                             @Qualifier("flushBusinessXmlServiceImpl") XmlService flushBusinessXmlService) {
+                           @Qualifier("plConditionXmlServiceImpl") XmlService plConditionXmlService,
+                           @Qualifier("DConditionXmlServiceImpl") XmlService DConditionXmlService,
+                           @Qualifier("LConditionXmlServiceImpl") XmlService LConditionXmlService,
+                           @Qualifier("sectionXmlServiceImpl") XmlService sectionXmlService,
+                           @Qualifier("classificationXmlServiceImpl") XmlService classificationXmlService,
+                           @Qualifier("flushBusinessXmlServiceImpl") XmlService flushBusinessXmlService,
+                           LogDBMapper logDBMapper) {
         this.lfBusinessXmlService = lfBusinessXmlService;
         this.plConditionXmlService = plConditionXmlService;
         this.dConditionXmlService = DConditionXmlService;
@@ -92,6 +95,7 @@ public class ApiServiceImpl implements ApiService {
         this.sectionXmlService = sectionXmlService;
         this.classificationXmlService = classificationXmlService;
         this.flushBusinessXmlService = flushBusinessXmlService;
+        this.logDBMapper = logDBMapper;
     }
 
 }
