@@ -1,12 +1,11 @@
 package com.sics.sxt.controller;
 
 
+import com.sics.sxt.dao.LogDBMapper;
 import com.sics.sxt.pojo.bo.LFBusiness;
-import com.sics.sxt.pojo.vo.ER;
 import com.sics.sxt.pojo.vo.R;
 import com.sics.sxt.service.ApiService;
 import com.sics.sxt.utils.GAsync;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +18,7 @@ import java.util.UUID;
 public class ApiController {
 
     private final ApiService apiService;
+    private final LogDBMapper logDBMapper;
 
     @GetMapping("LFBusiness")
     public R query(){
@@ -39,12 +39,19 @@ public class ApiController {
 
     @PostMapping("LFBusiness")
     public R upload(@RequestBody List<LFBusiness> lfBusinessList){
-        String batchNum = UUID.randomUUID().toString().replace("-", "");
-        GAsync.run(()-> apiService.uploadLFBusiness(lfBusinessList,batchNum));
+        GAsync.run(()-> apiService.uploadLFBusiness(lfBusinessList,getBatchNum()));
         return R.ok("请求成功").put(lfBusinessList);
     }
 
-    public ApiController(ApiService apiService) {
+    private String getBatchNum(){
+        String batchNum = UUID.randomUUID().toString().replace("-", "");
+        //logDBMapper.update(new LogDB("batchNUm"));
+        return batchNum;
+    }
+
+    public ApiController(ApiService apiService,
+                         LogDBMapper logDBMapper) {
         this.apiService = apiService;
+        this.logDBMapper = logDBMapper;
     }
 }
