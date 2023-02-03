@@ -41,8 +41,10 @@ public class ExcelServiceImpl implements ExcelService {
             erList.add(new ER("Y","upload is successful but data is null","^^"));
             return erList;
         }
+        String parentSection = null;
         for (Object o : paramList) {
             if( o instanceof LFBusiness lfBusiness){
+                lfBusiness.setParentSection(parentSection);
                 if (lfBusiness.getSectionHierarchy() == 0){
                     BusinessUtil.getAllBP(lfBusiness,paramList);
                     RespEntity<String> entity = RestUtil.sendLf(lfBusinessXmlService.creat(lfBusiness));
@@ -54,14 +56,13 @@ public class ExcelServiceImpl implements ExcelService {
                         addERList(RestUtil.sendLf(lConditionXmlService.creat(o)),erList,"LCondition create error: "+o);
                     }else {
                         erList.add(new ER("N",entity.getBody(),"LFBusiness create error"+o));
-                        System.out.println(entity.getBody());
                     }
                 }else {
                     addERList(RestUtil.sendLf(sectionXmlService.creat(o)),erList,"section create error: "+o);
                     if (lfBusiness.getSectionHierarchy() == 3)
                         addERList(RestUtil.sendLf(classificationXmlService.creat(o)),erList,"classification create error: "+o);
                 }
-                LFBusiness.parentSection = lfBusiness.getSection();
+                parentSection = lfBusiness.getSection();
             }else if (o instanceof PCBusiness){
                 addERList(RestUtil.sendLf(plConditionXmlService.creat(o)),erList,"PCBusiness create error: "+o);
             }else if (o instanceof FlushBusiness){

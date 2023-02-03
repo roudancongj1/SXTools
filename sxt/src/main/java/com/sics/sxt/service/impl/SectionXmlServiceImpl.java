@@ -6,7 +6,6 @@ import com.sics.sxt.service.XmlService;
 import org.springframework.stereotype.Service;
 
 
-import static com.sics.sxt.pojo.bo.LFBusiness.parentSection;
 
 @Service
 public class SectionXmlServiceImpl implements XmlService {
@@ -26,7 +25,7 @@ public class SectionXmlServiceImpl implements XmlService {
                     "                                <parentScopeOfCover xsi:type=\"ns4:SicsScopeOfCoverReference\">\n" +
                     "                                        <identifier>"+lfBusiness.getId()+"</identifier>\n" +
                     "                                        <sequenceNumber>0</sequenceNumber>\n" +
-                    "                                        <name>"+parentSection+"</name>\n" +
+                    "                                        <name>"+lfBusiness.getParentSection()+"</name>\n" +
                     "                                </parentScopeOfCover>\n" +
                     "                                <childScopeOfCover xsi:type=\"ns3:LfScopeOfCover\">\n" +
                     "                                        <name>"+ lfBusiness.getSection()+"</name>\n" +

@@ -247,7 +247,10 @@ public class LFBusiness implements Cloneable, Serializable {
     //private String res_cm;
 
 
-    public static String parentSection;
+    /**
+     * 父层级
+     * */
+    private String parentSection;
 
     @Override
     public LFBusiness clone() {

@@ -7,9 +7,9 @@
 </head>
 <body>
 <div style="width: 50%;float: left">
+    <p>LIFE当前环境: <span id="lfServSpan"></span></p>
     <input type="radio" value="TEST_LIFE_URL" name="lfRadioName" onclick="changeCurrentContext('lfRadioName','lfServSpan')">测试
-    <input type="radio" value="LIFE_URL" name="lfRadioName"  onclick="changeCurrentContext('lfRadioName','lfServSpan')" checked>生产
-    <p>当前LIFE环境: <span id="lfServSpan"></span></p><hr>
+    <input type="radio" value="LIFE_URL" name="lfRadioName"  onclick="changeCurrentContext('lfRadioName','lfServSpan')" checked>生产<hr>
     <form method="GET" action="templateDownload">
         <span>模板下载:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <select name="templateType">
@@ -30,9 +30,9 @@
     </form>
 </div>
 <div style="width: 50%;float: left">
+    <p>PC当前环境: <span id="pcServSpan"></span></p>
     <input type="radio" value="TEST_PC_URL" name="pcRadioName" onclick="changeCurrentContext('pcRadioName','pcServSpan')">测试
-    <input type="radio" value="PC_URL" name="pcRadioName"  onclick="changeCurrentContext('pcRadioName','pcServSpan')" checked>生产
-    <p>当前PC环境: <span id="pcServSpan"></span></p><hr>
+    <input type="radio" value="PC_URL" name="pcRadioName"  onclick="changeCurrentContext('pcRadioName','pcServSpan')" checked>生产<hr>
     <form method="GET" action="#">
         <span>模板下载:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <select name="templateType">

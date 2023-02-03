@@ -10,7 +10,6 @@ import com.sics.sxt.service.XmlService;
 import com.sics.sxt.utils.BusinessUtil;
 import com.sics.sxt.utils.RestUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +35,10 @@ public class ApiServiceImpl implements ApiService {
         if (lfBusinessList.isEmpty()){
             log.warn("upload is successful but data is null");
             //logDBMapper.save(new LogDB("upload is successful but data is null"));
-            //logDBMapper.aa();
         }
-        lfBusinessList.forEach(lfBusiness -> {
+        String parentSection = null;
+        for (LFBusiness lfBusiness : lfBusinessList) {
+            lfBusiness.setParentSection(parentSection);
             if (lfBusiness.getSectionHierarchy() == 0){
                 BusinessUtil.getAllBP(lfBusiness,lfBusinessList);
                 RespEntity<String> entity = RestUtil.sendLf(lfBusinessXmlService.creat(lfBusiness));
@@ -55,15 +55,14 @@ public class ApiServiceImpl implements ApiService {
                 if (lfBusiness.getSectionHierarchy() == 3)
                     addLogDB(RestUtil.sendLf(classificationXmlService.creat(lfBusiness)),"classification create error: "+lfBusiness);
             }
-            LFBusiness.parentSection = lfBusiness.getSection();
-        });
+            parentSection = lfBusiness.getSection();
+        }
     }
 
     @Override
     public void uploadPCBusiness(List<PCBusiness> pcBusinessList) {
 
     }
-
 
 
     private void addLogDB(RespEntity<String> entity,String errMsg){
@@ -77,7 +76,6 @@ public class ApiServiceImpl implements ApiService {
 
         }
         //logDBMapper.save(logDB);
-
     }
 
     private ApiServiceImpl(@Qualifier("lfBusinessXmlServiceImpl") XmlService lfBusinessXmlService,
