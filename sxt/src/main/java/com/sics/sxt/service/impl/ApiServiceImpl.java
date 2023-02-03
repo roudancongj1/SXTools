@@ -31,7 +31,7 @@ public class ApiServiceImpl implements ApiService {
 
 
     @Override
-    public void uploadLFBusiness(List<LFBusiness> lfBusinessList) {
+    public void uploadLFBusiness(List<LFBusiness> lfBusinessList,String batchNum) {
         if (lfBusinessList.isEmpty()){
             log.warn("upload is successful but data is null");
             //logDBMapper.save(new LogDB("upload is successful but data is null"));
@@ -60,7 +60,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void uploadPCBusiness(List<PCBusiness> pcBusinessList) {
+    public void uploadPCBusiness(List<PCBusiness> pcBusinessList,String batchNum) {
 
     }
 

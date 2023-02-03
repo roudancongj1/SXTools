@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ApiService {
 
-    void uploadLFBusiness(List<LFBusiness> lfBusinessList);
-    void uploadPCBusiness(List<PCBusiness> pcBusinessList);
+    void uploadLFBusiness(List<LFBusiness> lfBusinessList,String batchNum);
+    void uploadPCBusiness(List<PCBusiness> pcBusinessList,String batchNum);
 
 }

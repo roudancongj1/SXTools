@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ApiController {
@@ -38,7 +39,8 @@ public class ApiController {
 
     @PostMapping("LFBusiness")
     public R upload(@RequestBody List<LFBusiness> lfBusinessList){
-        GAsync.run(()-> apiService.uploadLFBusiness(lfBusinessList));
+        String batchNum = UUID.randomUUID().toString().replace("-", "");
+        GAsync.run(()-> apiService.uploadLFBusiness(lfBusinessList,batchNum));
         return R.ok("请求成功").put(lfBusinessList);
     }
 
