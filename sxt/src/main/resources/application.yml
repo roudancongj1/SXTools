@@ -14,10 +14,10 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
     #url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
-    url: jdbc:oracle:thin:@localhost:1521/ROOT
+    url: jdbc:oracle:thin:@localhost:1521:orcl
     #name: SICSLIFECEDED_DEBUG1
     #password: SICSLIFECEDED_DEBUG1
-    name: ROOT
+    username: ROOT
     password: root
 
 mybatis-plus:

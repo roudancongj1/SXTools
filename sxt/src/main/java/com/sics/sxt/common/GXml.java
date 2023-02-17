@@ -38,7 +38,6 @@ public class GXml {
     public static String getInsuredPeriodBeginDate(String str){
         StringBuffer sb = new StringBuffer();
         if(StringUtils.hasText(str)) {
-            String year =str.split("-")[0];
             sb.append("<beginDateTime>"+str+"T00:00:00+00:00</beginDateTime>\n");
 
         }
