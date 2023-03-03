@@ -1,85 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SXT</title>
-    <script src="../js/axios.js"></script>
+    <title>Home</title>
 </head>
 <body>
-<div style="width: 50%;float: left">
-    <p>LIFE当前环境: <span id="lfServSpan"></span></p>
-    <input type="radio" value="TEST_LIFE_URL" name="lfRadioName" onclick="changeCurrentContext('lfRadioName','lfServSpan')">测试
-    <input type="radio" value="LIFE_URL" name="lfRadioName"  onclick="changeCurrentContext('lfRadioName','lfServSpan')" checked>生产<hr>
-    <form method="GET" action="templateDownload">
-        <span>模板下载:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <select name="templateType">
-            <option value="CreateLfBusinessTemplate">CreateLfBusiness</option>
-            <!--<option value="FlushBusinessTemplate">FlushBusiness</option>-->
-        </select>
-        <input type="submit" value="Click Download"/>
-    </form><hr>
-    <form method="POST" action="uploadExcel" enctype="multipart/form-data">
-        <span>TemplateType:&nbsp;&nbsp;</span>
-        <select name="templateType">
-            <option value="LfBusinessTemplate">CreateLfBusiness</option>
-            <!--<option value="FlushBusinessTemplate">FlushBusiness</option>-->
-        </select><br/><br/>
-        <span>UploadFilePath:</span>
-        <input type="file" name="file"/><br/><br/>
-        <input type="submit" value="Submit"/>
-    </form>
+<div style="text-align: center">
+    <a href="/xml"><h1>SICS XML TOOLS</h1></a>
+    <a href="/sql"><h1>SICS SQL TOOLS</h1></a>
 </div>
-<div style="width: 50%;float: left">
-    <p>PC当前环境: <span id="pcServSpan"></span></p>
-    <input type="radio" value="TEST_PC_URL" name="pcRadioName" onclick="changeCurrentContext('pcRadioName','pcServSpan')">测试
-    <input type="radio" value="PC_URL" name="pcRadioName"  onclick="changeCurrentContext('pcRadioName','pcServSpan')" checked>生产<hr>
-    <form method="GET" action="#">
-        <span>模板下载:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <select name="templateType">
-            <option value="CreatePcBusinessTemplate">null</option>
-        </select>
-        <input type="submit" value="Click Download"/>
-    </form><hr>
-    <form method="POST" action="#" enctype="multipart/form-data">
-        <span>TemplateType:&nbsp;&nbsp;</span>
-        <select name="templateType">
-            <option value="null">null</option>
-        </select><br/><br/>
-        <span>UploadFilePath:</span>
-        <input type="file" name="file"/><br/><br/>
-        <input type="submit" value="Submit"/>
-    </form>
-</div>
-<script>
-    let changeCurrentContext = (radioName,serverId) => {
-        let boxValue = this.getRadioBoxValue(radioName);
-        axios({
-            method: 'get',
-            url: 'contextChange',
-            /*data: {
-                Context: boxValue,
-            }*/
-            params: {
-                context: boxValue,
-            },
-        }).then((req)=>{
-            document.getElementById(serverId).innerHTML = req.data.currentContext
-        })
-    }
-    function  getRadioBoxValue(radioName)
-    {
-        const obj = document.getElementsByName(radioName);
-        for(let i=0; i<obj.length; i++)  {
-            if(obj[i].checked)  {
-                return  obj[i].value;
-            }
-        }
-        return "undefined";
-    }
-    window.onload = () => {
-        changeCurrentContext('lfRadioName','lfServSpan')
-        changeCurrentContext('pcRadioName','pcServSpan')
-    }
-</script>
 </body>
 </html>

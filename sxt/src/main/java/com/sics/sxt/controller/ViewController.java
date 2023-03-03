@@ -25,6 +25,16 @@ public class ViewController {
         return "page/index.html";
     }
 
+    @GetMapping("xml")
+    public String xmlTools(){
+        return "page/xmlTools.html";
+    }
+
+    @GetMapping("sql")
+    public String sqlTools(){
+        return "page/sqlTools.html";
+    }
+
     @GetMapping("*")
     public String backHome(){
         return "redirect:/";
