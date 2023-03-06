@@ -6,16 +6,36 @@
     <script src="../js/axios.js"></script>
 </head>
 <body>
+<button onclick="testSend()">点击运行</button>
 <div>
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/loading.svg">
-    <img src="/img/ok.svg">
-    <img src="/img/err.svg">
+    <img style="display: none" id="loading1" src="/img/loading.svg">
+    <img style="display: none" id="loading2" src="/img/loading.svg">
+    <img style="display: none" id="loading3" src="/img/loading.svg">
+    <img style="display: none" id="loading4" src="/img/loading.svg">
+    <img style="display: none" id="loading5" src="/img/loading.svg">
+    <img style="display: none" id="ok" src="/img/ok.svg">
+    <img style="display: none" id="err"  src="/img/err.svg">
 </div>
+<script>
+
+    function testSend() {
+        axios({
+            method: 'get',
+            url: 'testSend',
+        }).then((req)=>{
+            if (req.data.code === '200'){
+                loading("loading1")
+            }else {
+                loading('err')
+            }
+        })
+    }
+
+
+    let loading = (id) => {
+        //document.getElementById("loading1").getAttributeNode("style").value = "visibility: visible/hidden"
+        document.getElementById(id).getAttributeNode("style").value = "display: inline"
+    }
+</script>
 </body>
 </html>
