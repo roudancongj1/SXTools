@@ -4,21 +4,28 @@ server:
 sics:
   life:
     #生产
-    serverAdd: http://10.0.11.111:9090/SicsServerQHR/SicsWSServlet
+    xmlServerAdd: http://10.0.11.111:9090/SicsServerQHR/SicsWSServlet
     #测试
-    testServerAdd: http://10.0.51.111:9080/SicsServer/SicsWSServlet
+    testXmlServerAdd: http://10.0.51.111:9080/SicsServer/SicsWSServlet
 
 spring:
   application:
     name: "sxt-serv"
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
-    #url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
-    url: jdbc:oracle:thin:@localhost:1521:orcl
-    #name: SICSLIFECEDED_DEBUG1
-    #password: SICSLIFECEDED_DEBUG1
-    username: ROOT
-    password: root
+    dynamic:
+      #数据源
+      primary: local
+      strict: false
+      datasource:
+        local:
+          url: jdbc:oracle:thin:@localhost:1521:orcl
+          username: ROOT
+          password: root
+        #HA_DATA_UAT:
+        #  url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
+        #  username: SICSLIFECEDED_DEBUG1
+        #  password: SICSLIFECEDED_DEBUG1
 
 mybatis-plus:
   type-aliases-package: com.sics.sxt.pojo.*

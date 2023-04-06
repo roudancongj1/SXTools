@@ -25,7 +25,7 @@ public class ViewController {
         return "page/index.html";
     }
 
-    @GetMapping("xml")
+    @GetMapping("excel")
     public String xmlTools(){
         return "page/xmlTools.html";
     }

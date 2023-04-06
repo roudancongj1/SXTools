@@ -15,12 +15,12 @@ public class ConfUrl {
     private static String CURRENT_PC_URL;
 
 
-    @Value("${sics.life.serverAdd}")
+    @Value("${sics.life.xmlServerAdd}")
     public void lifeUrlBuild(String LIFE_URL) {
         ConfUrl.LIFE_URL = LIFE_URL;
     }
 
-    @Value("${sics.life.testServerAdd}")
+    @Value("${sics.life.testXmlServerAdd}")
     public void testLifeUrlBuild(String TEST_LIFE_URL) {
         ConfUrl.TEST_LIFE_URL = TEST_LIFE_URL;
     }
@@ -28,7 +28,7 @@ public class ConfUrl {
     /**
      * 默认生产环境
      * */
-    @Value("${sics.life.serverAdd}")
+    @Value("${sics.life.xmlServerAdd}")
     public void currentLifeBuild(String CURRENT_LIFE_URL) {
         ConfUrl.CURRENT_LIFE_URL = CURRENT_LIFE_URL;
     }

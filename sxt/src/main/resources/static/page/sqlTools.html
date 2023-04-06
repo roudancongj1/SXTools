@@ -4,45 +4,99 @@
     <meta charset="UTF-8">
     <title>SQT</title>
     <script src="../js/axios.js"></script>
+    <style>
+        #progress {
+            min-width: 100%;
+            height: 40px;
+            background-color: #ddd;
+            border-radius: 10px;
+        }
+        #bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0;
+            border-radius: 10px;
+        }
+        a:visited {
+            color: dimgray
+        }
+    </style>
 </head>
 <body>
-<button onclick="testSend()">点击运行</button>
+<button onclick="executeAll()">execute all</button>
 <div>
-    <img style="display: none" id="loading1" src="/img/loading.svg">
-    <img style="display: none" id="loading2" src="/img/loading.svg">
-    <img style="display: none" id="loading3" src="/img/loading.svg">
-    <img style="display: none" id="loading4" src="/img/loading.svg">
-    <img style="display: none" id="loading5" src="/img/loading.svg">
-    <img style="display: none" id="ok" src="/img/ok.svg">
-    <img style="display: none" id="err"  src="/img/err.svg">
+    <a id="a1" href="#" onclick="testSend('a1','loading1','ok1','err1')" style="color: cornflowerblue">团险导数据</a>
+    <img id="loading1" style="display: none" src="/img/loading.gif">
+    <img id="ok1" style="display: none" src="/img/ok.svg">
+    <img id="err1" style="display: none" src="/img/err.svg">
 </div>
-<div id="progress-bar"></div>
+<div id="progress">
+    <div id="bar"></div>
+</div>
+
 <script>
 
-    function testSend() {
-        axios({
-            method: 'get',
-            url: 'testSend',
-        }).then((req) => {
-            if (req.data.code === '200') {
-                loading("loading1")
-            } else {
-                loading('err')
+
+
+    let executeAll = async () => {
+        const threadNum = 3
+        const addNum = Math.floor(10000/threadNum)/100
+        let currentProgress = 0.00
+        progressBar(currentProgress)
+        if (await testSend('loading1','ok1','err1')){
+            currentProgress += addNum
+            progressBar(currentProgress)
+            if (await testSend('loading1','ok1','err1')){
+                currentProgress += addNum
+                progressBar(currentProgress)
             }
-            progressBar(req.data)
+        }
+
+    }
+    let testSend = async (aId,lId, oId, eId) => {
+        let progress = false
+        unaShow(aId)
+        show(lId)
+        unShow(oId)
+        unShow(eId)
+        await axios({
+            method: 'get',
+            url: 'LFBusiness',
+        }).then((req) => {
+            unShow(lId)
+            if (req.data.code === '0') {
+                show(oId)
+                progress = true
+            } else {
+                show(eId)
+                progress = false
+            }
         }).catch(err => {
-            console.log(err)
+            unShow(lId)
+            show(eId)
+            alert(err)
         })
+        return progress
     }
 
 
-    let loading = (id) => {
+    let show = (id) => {
         //document.getElementById("loading1").getAttributeNode("style").value = "visibility: visible/hidden"
         document.getElementById(id).getAttributeNode("style").value = "display: inline"
     }
+
+    let unShow = (id) => {
+        //document.getElementById("loading1").getAttributeNode("style").value = "visibility: visible/hidden"
+        document.getElementById(id).getAttributeNode("style").value = "display: none"
+    }
+
+    let unaShow = (id) => {
+        document.getElementById(id).getAttributeNode("style").value = "pointer-events: none"
+    }
+
     let progressBar = (percent) => {
-        const progressBar = document.getElementById("progress-bar");
-        progressBar.style.width = `${percent}%`;
+        const bar = document.getElementById("bar");
+        bar.style.width = `${percent}%`;
     }
 </script>
 </body>
