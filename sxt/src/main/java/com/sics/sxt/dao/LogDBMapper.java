@@ -13,6 +13,6 @@ import java.util.Map;
 @Repository
 public interface LogDBMapper extends BaseMapper<LogDB> {
 
-    @Select("select * from  business")
+    @Select("select * from  root.business")
     List<Map<String,Object>> aa();
 }

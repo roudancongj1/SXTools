@@ -24,15 +24,18 @@ spring:
           password: root
         #HA_DATA_UAT:
         #  url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
-        #  username: SICSLIFECEDED_DEBUG1
-        #  password: SICSLIFECEDED_DEBUG1
+        #  username: SICS_DATA_1
+        #  password: sics2023
+        #HA_DATA_PROD:
+        #  url: jdbc:oracle:thin:@172.19.50.66:1521/test02db
+        #  username: SICS_DATA/SICSLIFE_CEDED/SICSLIFE_CEDED1
+        #  password: SICS_DATA123/SICSLIFE_CEDED18/SICSLIFE_CEDED1
 
 mybatis-plus:
   type-aliases-package: com.sics.sxt.pojo.*
-    #开启sql显示
-    #configuration:
-    #  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  #驼峰命名
   configuration:
+    #驼峰命名
     map-underscore-to-camel-case: true
+    #开启sql显示
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 

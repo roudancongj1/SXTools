@@ -20,19 +20,41 @@
         a:visited {
             color: dimgray
         }
+        a{
+            font-size: larger;
+        }
+        .aDiv{
+            margin: 5px auto
+        }
+        span{
+            color: firebrick;
+            font-size: larger;
+            float: right;
+        }
     </style>
 </head>
 <body>
-<button onclick="executeAll()">execute all</button>
-<div>
-    <a id="a1" href="#" onclick="testSend('a1','loading1','ok1','err1')" style="color: cornflowerblue">团险导数据</a>
-    <img id="loading1" style="display: none" src="/img/loading.gif">
-    <img id="ok1" style="display: none" src="/img/ok.svg">
-    <img id="err1" style="display: none" src="/img/err.svg">
-</div>
+<button onclick="executeAll()" style="font-size: larger;margin: 10px auto">execute all</button>
 <div id="progress">
     <div id="bar"></div>
 </div>
+<div>
+    <div class="aDiv">
+        <a id="a1" href="#" onclick="testSend('a1','loading1','ok1','err1','msg1')" style="color: cornflowerblue">团险导数据</a>
+        <img id="loading1" style="display: none" src="/img/loading.gif">
+        <img id="ok1" style="display: none" src="/img/ok.svg">
+        <img id="err1" style="display: none" src="/img/err.svg">
+        <span id="msg1"></span>
+    </div>
+    <div>
+        <a id="a2" href="#" onclick="testSend('a2','loading2','ok2','err2','msg2')" style="color: cornflowerblue">check校验</a>
+        <img id="loading2" style="display: none" src="/img/loading.gif">
+        <img id="ok2" style="display: none" src="/img/ok.svg">
+        <img id="err2" style="display: none" src="/img/err.svg">
+        <span id="msg2"></span>
+    </div>
+</div>
+
 
 <script>
 
@@ -43,22 +65,23 @@
         const addNum = Math.floor(10000/threadNum)/100
         let currentProgress = 0.00
         progressBar(currentProgress)
-        if (await testSend('loading1','ok1','err1')){
+        if (await testSend('a1','loading1','ok1','err1','msg1')){
             currentProgress += addNum
             progressBar(currentProgress)
-            if (await testSend('loading1','ok1','err1')){
+            if (await testSend('a2','loading2','ok2','err2','msg2')){
                 currentProgress += addNum
                 progressBar(currentProgress)
             }
         }
 
     }
-    let testSend = async (aId,lId, oId, eId) => {
+    let testSend = async (aId,lId, oId, eId,mID) => {
         let progress = false
         unaShow(aId)
-        show(lId)
+        unShowMsg(mID)
         unShow(oId)
         unShow(eId)
+        show(lId)
         await axios({
             method: 'get',
             url: 'LFBusiness',
@@ -67,10 +90,12 @@
             if (req.data.code === '0') {
                 show(oId)
                 progress = true
+
             } else {
                 show(eId)
                 progress = false
             }
+            showMsg(mID,req.data.aaa)
         }).catch(err => {
             unShow(lId)
             show(eId)
@@ -92,6 +117,14 @@
 
     let unaShow = (id) => {
         document.getElementById(id).getAttributeNode("style").value = "pointer-events: none"
+    }
+
+    let showMsg = (id,msg) => {
+        document.getElementById(id).innerHTML = msg
+    }
+
+    let unShowMsg = (id) => {
+        document.getElementById(id).innerHTML = ''
     }
 
     let progressBar = (percent) => {

@@ -1,6 +1,7 @@
 package com.sics.sxt.controller;
 
 
+import com.sics.sxt.dao.CommonMapper;
 import com.sics.sxt.dao.LogDBMapper;
 import com.sics.sxt.pojo.bo.LFBusiness;
 import com.sics.sxt.pojo.vo.R;
@@ -9,6 +10,7 @@ import com.sics.sxt.utils.GAsync;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -16,6 +18,7 @@ public class ApiController {
 
     private final ApiService apiService;
     private final LogDBMapper logDBMapper;
+    private final CommonMapper commonMapper;
 
     @CrossOrigin
     @GetMapping("LFBusiness")
@@ -28,13 +31,16 @@ public class ApiController {
             //    System.out.println("down");
             //    //return null;
             //});
+            //List<Map<String, Object>> aa = logDBMapper.aa();
+
+            List<Map<String, Object>> maps = commonMapper.selectByTable("BUSINESS");
             Thread.sleep(3000);
+            return R.ok("请求成功").put("bar",20).put("aaa",maps.size());
         } catch (Exception e) {
             System.out.println("程序异常");
             e.printStackTrace();
             return R.error("请求失败");
         }
-        return R.ok("请求成功").put("bar",20);
     }
 
     @PostMapping("LFBusiness")
@@ -50,8 +56,10 @@ public class ApiController {
     }
 
     public ApiController(ApiService apiService,
-                         LogDBMapper logDBMapper) {
+                         LogDBMapper logDBMapper,
+                         CommonMapper commonMapper) {
         this.apiService = apiService;
         this.logDBMapper = logDBMapper;
+        this.commonMapper = commonMapper;
     }
 }
