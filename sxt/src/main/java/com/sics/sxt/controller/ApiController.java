@@ -33,7 +33,7 @@ public class ApiController {
             //});
             //List<Map<String, Object>> aa = logDBMapper.aa();
 
-            List<Map<String, Object>> maps = commonMapper.selectByTable("BUSINESS");
+            List<Map<String, Object>> maps = commonMapper.selectByTable("ROOT","BUSINESS");
             Thread.sleep(3000);
             return R.ok("请求成功").put("bar",20).put("aaa",maps.size());
         } catch (Exception e) {
