@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sics.sxt.dao.SplitMapper">
+    <insert id="insertBatchDataByUploadObjID" parameterType="List">
+        INSERT INTO ${tableName}
+        select t.* from GROUP_CESSION_UPLOAD_MID t where t.OBJECT_ID in
+        <foreach collection="batchList" item="item" open=" ( " close=" ) " separator=",">
+            #{item}
+        </foreach>
+    </insert>
+    <insert id="insertBatchDataByClaimObjID" parameterType="List">
+        INSERT INTO ${tableName}
+        select t.* from GROUP_CESSION_CLAIM_MID t where t.OBJECT_ID in
+        <foreach collection="batchList" item="item" open=" ( " close=" ) " separator=",">
+            #{item}
+        </foreach>
+    </insert>
+    <insert id="insertBatchDataByLifeId" parameterType="List">
+        INSERT INTO ${tableName}
+        select t.* from G_SPLIT_00NB_UPLOAD t where t.LIFE1_ID in
+        <foreach collection="batchList" item="item" open=" ( " close=" ) " separator=",">
+            #{item}
+        </foreach>
+    </insert>
+
+    <update id="splitRpoInit">
+        declare
+        v_sql      clob;
+        begin
+        v_sql := empty_clob();
+        v_sql := 'create table sicslife_ceded1.lifeId_partial_date as
+        SELECT io.partial_date_yea,count(1) num
+        FROM lf_cession A,
+          cession_detail B,
+          benefit_group E, BEN_GROUP_DETAIL F,user_def_data udd,
+          amendment Q,lf_insurable_obj IO,life_io_identifier ID
+        WHERE b.fk_cession = a.object_id
+        and a.fk_ben_group          = E.OBJECT_ID
+        AND E.FRK_ATT_CESS          = ''IND_CESS''
+        and B.Fk_Ces_Mut_Cre=Q.OBJECT_ID
+        and F.FK_BEN_GROUP = E.OBJECT_ID
+        and NVL(b.cession_from,0) =''G''
+        and e.fk_user_def=udd.object_id
+        and IO.OBJECT_ID = ID.FK_IO
+        and a.fk_ins_object = IO.Object_Id
+        and f.is_ltst_amdt=''Y'' and b.retroceded_date is null
+        group by io.partial_date_yea';
+        execute immediate v_sql;
+
+        v_sql := 'alter table sicslife_ceded1.lifeId_partial_date add lowsum     NUMBER';
+        execute immediate v_sql;
+        v_sql := 'alter table sicslife_ceded1.lifeId_partial_date add btyear01   NUMBER(4)';
+        execute immediate v_sql;
+
+        end;
+    </update>
+
+    <update id="splitRpoUpdate" parameterType="java.lang.Integer">
+        begin
+        update  sicslife_ceded1.lifeId_partial_date a set a.lowsum = (
+            select sum(b.num) from sicslife_ceded1.lifeId_partial_date b
+            where b.partial_date_yea&lt;= a.partial_date_yea and b.btyear01 is null
+        )
+        where a.btyear01 is null;
+        update  sicslife_ceded1.lifeId_partial_date a set a.btyear01 = (
+            select max(b.partial_date_yea) from sicslife_ceded1.lifeId_partial_date b
+            where b.lowsum&lt;= ${param1} and b.btyear01 is null
+        )
+        where a.btyear01 is null;
+        update  sicslife_ceded1.lifeId_partial_date a set a.lowsum = '' ,a.btyear01 = ''
+        where a.partial_date_yea>a.btyear01;
+        end;
+    </update>
+
+</mapper>

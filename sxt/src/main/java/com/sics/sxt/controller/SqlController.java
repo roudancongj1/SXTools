@@ -1,5 +1,6 @@
 package com.sics.sxt.controller;
 
+import com.sics.sxt.dao.CommonMapper;
 import com.sics.sxt.pojo.vo.R;
 import oracle.jdbc.driver.OracleDriver;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +19,34 @@ import java.util.Map;
 
 @RestController
 public class SqlController {
+
+    private final CommonMapper commonMapper;
+
+
+
+
+    @CrossOrigin
+    @GetMapping("LFBusiness")
+    public R query(){
+        try {
+            //GAsync.run(()->{
+            //    logDBMapper.aa();
+            //    System.out.println("up");
+            //    int a=1/0;
+            //    System.out.println("down");
+            //    //return null;
+            //});
+            //List<Map<String, Object>> aa = logDBMapper.aa();
+
+            List<Map<String, Object>> maps = commonMapper.selectByTable("BUSINESS");
+            Thread.sleep(3000);
+            return R.ok("请求成功").put("bar",20).put("aaa",maps.size());
+        } catch (Exception e) {
+            System.out.println("程序异常");
+            e.printStackTrace();
+            return R.error("请求失败");
+        }
+    }
 
     @GetMapping("call")
     public R call (){
@@ -65,5 +94,9 @@ public class SqlController {
             return R.error();
         }
 
+    }
+
+    public SqlController(CommonMapper commonMapper) {
+        this.commonMapper = commonMapper;
     }
 }

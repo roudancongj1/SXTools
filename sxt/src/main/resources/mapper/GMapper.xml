@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sics.sxt.dao.GMapper">
+    <update id="updateSAR" parameterType="java.util.List">
+        begin
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update group_cession_upload_mid <set> SUM_AT_RISK = round(#{item.sumAtRisk})  </set> where OBJECT_ID = #{item.objectId}
+        </foreach>
+        ;end;
+    </update>
+    <update id="compareCession" >
+        declare
+        v_sql      clob;
+        begin
+        v_sql := empty_clob();
+        v_sql := 'CREATE TABLE sicslife_ceded1.hagpIN_policy${param2} AS
+        SELECT a.tran_date,
+        a.Trans_Effective_Date ,
+        a.policy_number,
+        a.trans_code,
+        a.policy_type||a.CVGID ||a.life1_id as sub_key,
+        a.bussno,a.transaction_number,
+        a.SUMATRISK,
+        a.rasnum,a.rasnum_name,a.ripreceptno,
+        a.cur_ra_prem PREM,
+        a.cur_ra_comm COMPAY,
+        a.cur_ra_amount RA_AMOUNT
+        FROM SICS_DATA.Group_Cession_Upload_All A
+        where a.rasnum_name is not null
+        <if test="@org.springframework.util.StringUtils@hasText(param3)">
+            and a.tran_date >= ''${param3}''
+        </if>
+        <if test="@org.springframework.util.StringUtils@hasText(param4)">
+            and a.tran_date &lt;= ''${param4}''
+        </if>
+        <if test="param1 == true">
+            and a.POLICY_NUMBER||a.POLICY_TYPE||a.Cvgid||a.LIFE1_ID
+            in(select tmp.pol_no||tmp.cedant_ces_nber from sicslife_ceded1.dx_grp_cession_del tmp)
+        union
+        SELECT a.tran_date,
+        a.Trans_Effective_Date ,
+        a.policy_number,
+        a.trans_code,
+        a.policy_type||a.CVGID ||a.life1_id as sub_key,
+        a.bussno,a.transaction_number,
+        a.SUMATRISK,
+        a.rasnum,a.rasnum_name,a.ripreceptno,
+        a.cur_ra_prem PREM,
+        a.cur_ra_comm COMPAY,
+        a.cur_ra_amount RA_AMOUNT
+        FROM SICS_DATA.his_grp_cession_upload_all A
+        where a.rasnum_name is not null
+            and a.POLICY_NUMBER||a.POLICY_TYPE||a.Cvgid||a.LIFE1_ID
+            in(select tmp.pol_no||tmp.cedant_ces_nber from sicslife_ceded1.dx_grp_cession_del tmp)
+        </if>
+        ';
+        execute immediate v_sql;
+        v_sql := 'CREATE TABLE sicslife_ceded1.GsicsPL_policy${param2} AS
+        SELECT
+            E.POL_NO,
+            b.other_info17 TRAN_DATE_orn,min(b1.TRAN_DATE) TRAN_DATE,b.other_info3 trans_code,b.other_info16 bussno,Q.TRANSACTION_NMBR TRANNO,
+            MIN(Q.frk_trans_ref) BATCTRCDE,
+            MIN(Q.EFF_START_TMSTMP) TRAN_EFFECTIVE_DATE,
+            replace(E.CEDANT_CES_NBER,''_LC'','''') CEDANT_CES_NBER,
+            min(b1.sum_at_risk) SUM_AT_RISK,
+            min(b1.net_sum_ret) SSRETN,
+            I.identifier  RASNUM,
+            min(b.sum_at_risk) RA_AMOUNT,
+            D.frk_entry_sub_cat,
+            D.code PREM_type_code,
+            D.name PREM_type_name,
+            (case when D.frk_entry_sub_cat=''PREM'' then sum(C.item_adjst) else 0.00 end) as PREM,
+            (case when D.frk_entry_sub_cat=''DCOM'' then sum(C.item_adjst) else 0.00 end) as COMPAY
+        FROM lf_cession A,
+             cession_detail B,
+             ces_account_item C,
+             entry_code D,
+             benefit_group E,
+             scope_of_cover K,
+             LF_cession A1,
+             cession_detail B1,
+             life_cycle_phase R,
+             insured_period F,
+             business G,
+             business_prtnr_rel H,
+             party I,
+             amendment Q,
+             amendment Q1
+        <if test="param1 == true">
+            ,sicslife_ceded1.dx_grp_cession_del dx
+        </if>
+        WHERE b.fk_cession = a.object_id
+          and b1.fk_cession = a1.object_id
+          AND C.FK_CESSION            = B.OBJECT_ID
+          AND C.FK_ENTRY_CODE         = D.OBJECT_ID
+          and a.fk_ben_group          = E.OBJECT_ID
+          AND E.FRK_ATT_CESS          = ''IND_RETRO''
+          AND A.FK_IN_CESSION        = A1.object_id
+          and A.Fk_Soc               =K.Object_Id
+          and K.FK_lifecyclep=R.object_id
+          and R.fk_ins_prd=F.object_id
+          AND f.fk_business          = G.OBJECT_ID
+          AND H.FK_INS_PERIOD             = F.OBJECT_ID
+          AND H.FK_BUS_PARTNER        = I.OBJECT_ID
+          AND I.identifier           &lt;> ''BP2''
+          and B.Fk_Ces_Mut_Cre=Q.OBJECT_ID
+          and B1.Fk_Ces_Mut_Cre=Q1.OBJECT_ID
+          and Q.TRANSACTION_NMBR=Q1.TRANSACTION_NMBR
+          and  NVL(b.cession_from,0) =''G''
+        <if test="@org.springframework.util.StringUtils@hasText(param3)">
+            and b.TRAN_DATE>=to_date(''${param3}'',''yyyy-mm-dd'')
+        </if>
+        <if test="@org.springframework.util.StringUtils@hasText(param4)">
+            and b.TRAN_DATE&lt;=to_date(''${param4}'',''yyyy-mm-dd'')
+        </if>
+        <if test="param1 == true">
+            and E.POL_NO = dx.POL_NO and replace(E.CEDANT_CES_NBER,''_LC'','''') = dx.CEDANT_CES_NBER
+        </if>
+        group by E.POL_NO,E.CEDANT_CES_NBER,Q.TRANSACTION_NMBR,b.other_info17,b.other_info3,b.other_info16,
+                 I.identifier,D.frk_entry_sub_cat, D.code,D.name';
+        execute immediate v_sql;
+        v_sql := 'CREATE TABLE sicslife_ceded1.GsicsPL_policy${param2}_tmp AS
+        select s.POL_NO,s.CEDANT_CES_NBER,s.bussno , s.BATCTRCDE,s.trans_code,
+               s.TRAN_EFFECTIVE_DATE,s.TRAN_DATE,s.TRAN_DATE_ORN,s.RASNUM,
+               min(s.RA_AMOUNT) RA_AMOUNT,sum(s.PREM) PREM,sum(s.COMPAY) COMPAY
+        from sicslife_ceded1.GsicsPL_policy${param2} s
+        group by s.POL_NO,s.CEDANT_CES_NBER,s.bussno , s.BATCTRCDE,s.trans_code,
+                 s.TRAN_EFFECTIVE_DATE,s.TRAN_DATE,s.TRAN_DATE_ORN,s.RASNUM
+        ';
+        execute immediate v_sql;
+        v_sql := 'create table sicslife_ceded1.GPoliyPL_HA_to_SICS${param2} as
+        select h.tran_date H_tran_date,h.Trans_Effective_Date H_Trans_Effective_Date,
+               h.policy_number H_policy_number,
+               h.trans_code H_trans_code,
+               h.sub_key H_sub_key,
+               h.bussno H_bussno,h.transaction_number H_transaction_number,
+               h.SUMATRISK H_SUMATRISK,h.rasnum H_rasnum,h.rasnum_name H_rasnum_name,h.ripreceptno H_ripreceptno,
+               h.RA_AMOUNT H_RA_AMOUNT,h.prem H_prem,h.compay H_compay,
+        s.*,abs(nvl(h.ra_amount,0))-abs(nvl(s.ra_amount,0)) as if_RA_AMOUNT,abs(nvl(h.COMPAY,0))-abs(nvl(s.COMPAY,0)) if_COMPAY,abs(nvl(h.prem,0))-abs(nvl(s.prem,0)) if_prem
+        from sicslife_ceded1.hagpIN_policy${param2} h
+                 left join sicslife_ceded1.GsicsPL_policy${param2}_tmp s
+                           on h.policy_number=s.POL_NO and h.sub_key=replace(s.CEDANT_CES_NBER,''_LC'','''') and h.bussno=s.bussno
+                               and h.trans_code=s.trans_code and h.rasnum=s.rasnum
+        order by  h.policy_number,h.sub_key,h.bussno';
+        execute immediate v_sql;
+        v_sql := 'create table sicslife_ceded1.GPoliyPL_SICS_to_HA${param2} as
+        select h.tran_date H_tran_date,h.Trans_Effective_Date H_Trans_Effective_Date,
+               h.policy_number H_policy_number,
+               h.trans_code H_trans_code,
+               h.sub_key H_sub_key,
+               h.bussno H_bussno,h.transaction_number H_transaction_number,
+               h.SUMATRISK H_SUMATRISK,h.rasnum H_rasnum,h.rasnum_name H_rasnum_name,h.ripreceptno H_ripreceptno,
+               h.RA_AMOUNT H_RA_AMOUNT,h.prem H_prem,h.compay H_compay,
+        s.*,abs(nvl(h.ra_amount,0))-abs(nvl(s.ra_amount,0)) as if_RA_AMOUNT,abs(nvl(h.COMPAY,0))-abs(nvl(s.COMPAY,0)) if_COMPAY,abs(nvl(h.prem,0))-abs(nvl(s.prem,0)) if_prem
+        from sicslife_ceded1.hagpIN_policy${param2} h
+                 right join sicslife_ceded1.GsicsPL_policy${param2}_tmp s
+                            on h.policy_number=s.POL_NO and h.sub_key=replace(s.CEDANT_CES_NBER,''_LC'','''') and h.bussno=s.bussno
+                                and h.trans_code=s.trans_code and h.rasnum=s.rasnum
+        order by  h.policy_number,h.sub_key,h.bussno';
+        execute immediate v_sql;
+        v_sql := 'create table sicslife_ceded1.GPoliyPL_SICS_to_HA_val${param2} as
+        select * from sicslife_ceded1.GPoliyPL_HA_to_SICS${param2} a
+        where (nvl(a.if_RA_AMOUNT,0)!=''0'' or nvl(a.if_COMPAY,0) !=''0'' or nvl(a.if_prem,0) !=0) and a.pol_no is not null';
+        execute immediate v_sql;
+        v_sql := 'create table  sicslife_ceded1.GPoliyPL_HA_to_SICS_null${param2} as
+        select * from sicslife_ceded1.GPoliyPL_HA_to_SICS${param2} a
+        where a.POL_NO is null and (nvl(a.H_RA_AMOUNT,0)&lt;>''0'' or nvl(a.H_COMPAY,0) &lt;>''0'' or nvl(a.H_prem,0)&lt;>''0'' )
+        ';
+        execute immediate v_sql;
+        v_sql := 'create table  sicslife_ceded1.GPoliyPL_SICS_to_HA_null${param2} as
+        select * from sicslife_ceded1.GPoliyPL_SICS_to_HA${param2} a
+        where a.H_policy_number is null  and (nvl(a.RA_AMOUNT,0)&lt;>''0'' or nvl(a.COMPAY,0) &lt;>''0'' or nvl(a.prem,0)&lt;>''0'' )
+        ';
+        execute immediate v_sql;
+        end;
+    </update>
+
+    <update id="compareClaim">
+        declare
+        v_sql      clob;
+        begin
+        v_sql := empty_clob();
+        v_sql := 'CREATE TABLE sicslife_ceded1.hagp_claim_inward${param2} AS
+        SELECT gc.endcasedate reinsurance_date
+        , gc.Contno
+        , gc.rgtno cedents_ref
+        , gc.cvgid||gc.Insurednum CEDANT_CES_NBER
+        , (select IDENTIFIER from sicslife_ceded.party_reins where SHORT_NAME=gc.REINSURECOM ) AS rasnum
+        , gc.REINSURECOM
+        , gc.COMCLMPAY
+        FROM sics_data.group_claim_rein gc
+        where 1=1
+        <if test="@org.springframework.util.StringUtils@hasText(param3)">
+            and gc.endcasedate>=''${param3}''
+        </if>
+        <if test="@org.springframework.util.StringUtils@hasText(param4)">
+            and gc.endcasedate&lt;=''${param4}''
+        </if>
+        <if test="param1 == true">
+            and gc.contno||substr(gc.cvgid,1,4)||gc.cvgid||gc.insurednum||gc.rgtno in (select tmp.pol_no||tmp.cedant_ces_nber||tmp.BUSSNO from sicslife_ceded1.dx_grp_cession_del tmp)
+        union
+        SELECT gc.endcasedate reinsurance_date
+        , gc.Contno
+        , gc.rgtno cedents_ref
+        , gc.cvgid||gc.Insurednum CEDANT_CES_NBER
+        , (select IDENTIFIER from sicslife_ceded.party_reins where SHORT_NAME=gc.REINSURECOM ) AS rasnum
+        , gc.REINSURECOM
+        , gc.COMCLMPAY
+        FROM sics_data.his_grp_claim_rein gc
+        where 1=1
+            and gc.contno||substr(gc.cvgid,1,4)||gc.cvgid||gc.insurednum||gc.rgtno in (select tmp.pol_no||tmp.cedant_ces_nber||tmp.BUSSNO from sicslife_ceded1.dx_grp_cession_del tmp)
+        </if>';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GsicsPL_claim${param2} as
+        select * from (
+        SELECT
+        E.pol_no,
+        P.PAY_DATE tran_date,
+        E.CEDANT_CES_NBER  ,
+        p.cedents_ref,
+        I.identifier RASNUM,
+        (select ExctendBranchCode from groupOrgMapping where groupBranchCode
+        =''860''||N.code) code,
+        (CASE WHEN B.Other_Group_Info4 = ''01'' THEN ''SL''
+        WHEN B.Other_Group_Info4 = ''10'' THEN ''TN1''
+        WHEN B.Other_Group_Info4 = ''11'' THEN ''TN2''
+        WHEN B.Other_Group_Info4 = ''04'' THEN ''SL4''
+        WHEN B.Other_Group_Info4 = ''06'' THEN ''SL1''
+        WHEN B.Other_Group_Info4 = ''07'' THEN ''SL2''
+        WHEN B.Other_Group_Info4 = ''02'' THEN ''SL3''
+        WHEN B.Other_Group_Info4 = ''12'' THEN ''SL5''
+        WHEN B.Other_Group_Info4 = ''13'' THEN ''SL6''
+        END) Other_Group_Info4,
+        C.ITEM_ADJST COMCLMPAY,c.item_amount,p.created_date as created_date,O.unique_id,
+        row_number() over(partition by e.pol_no,e.CEDANT_CES_NBER,i.identifier,P.object_id order by f.eff_start_tmstmp desc,f.transaction_nmbr desc) as rank
+        FROM lf_cession A,
+        lf_cession A1,
+        cession_detail B,
+        ces_account_item C,
+        entry_code D,
+        benefit_group E,
+        benefit_group E1,
+        ben_group_detail K,
+        amendment F,
+        amendment F_retro,
+        business G,
+        business_prtnr_rel H,
+        party I,
+        insured_period J,
+        ces_add_cl_tbl L,
+        user_def_data M,
+        reference_data N,
+        lf_claim O,
+        lf_claim_detail P,
+        scope_of_cover x,
+        life_cycle_phase y,
+        user_def_data cM
+        <if test="param1 == true">
+            ,sicslife_ceded1.dx_grp_cession_del dx
+        </if>
+        WHERE B.fk_cession = A.object_id
+        AND A.fk_in_cession = A1.Object_Id
+        AND C.fk_entry_code = D.object_id
+        AND A1.FK_BEN_GROUP = E1.OBJECT_ID
+        AND A.OBJECT_ID = O.FK_CESSION
+        AND O.OBJECT_ID = P.FK_PARENT
+        AND P.OBJECT_ID = C.FK_CLAIM
+        AND O.EVENT_DATE >= B.AMDT_VALID_FROM_DT
+        AND A.fk_ben_group = E.object_id
+        AND E.object_id = K.fk_ben_group
+        AND E.frk_att_cess = ''IND_RETRO''
+        AND J.fk_business  = G.object_id
+        AND J.object_id = H.FK_INS_PERIOD
+        AND H.FK_BUS_PARTNER = I.object_id
+        AND B.fk_ces_mut_cre = F_RETRO.object_id
+        AND p.fk_amendment_cre = f.object_id
+        AND E1.fk_user_def = M.object_id(+)
+        AND A.object_id = L.fk_cession
+        AND N.CODE = L.FRK_ADD_CLASS
+        and o.fk_user_def = cm.object_id
+        AND N.DATA_TYPE_CODE = ''01156''
+        AND I.identifier !=''BP2''
+        AND A.Fk_Soc = x.OBJECT_ID
+        AND x.FK_LIFECYCLEP = y.OBJECT_ID
+        AND y.FK_INS_PRD = J.OBJECT_ID
+        AND D.FRK_ENTRY_SUB_CAT = ''LOSS''
+        <if test="@org.springframework.util.StringUtils@hasText(param3)">
+            and P.PAY_DATE >=to_date(''${param3}'',''YYYY-MM-DD'')
+        </if>
+        <if test="@org.springframework.util.StringUtils@hasText(param4)">
+            and P.PAY_DATE &lt;=to_date(''${param4}'',''YYYY-MM-DD'')
+        </if>
+        <if test="param1 == true"><!-- and substr(p.cedents_ref,1,INSTR(p.cedents_ref,''C'',1,2)-1) = dx.BUSSNO -->
+            and E.pol_no = dx.pol_no and E.cedant_ces_nber = dx.cedant_ces_nber
+        </if>
+        and nvl(B.Cession_From,0) = ''G''
+        and a.frk_ces_type = ''RP_RETRO''
+        and k.is_ltst_amdt=''Y''
+        AND N.code &lt;> ''NOTSPEC''
+        AND C.ITEM_ADJST &lt;> 0
+        )where  rank&lt;=1';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GclaimPL_HA_to_SICS${param2} as
+        SELECT HA.reinsurance_date H_reinsurance_date
+        , HA.Contno H_Contno
+        , HA.cedents_ref H_cedents_ref
+        , HA.CEDANT_CES_NBER H_CEDANT_CES_NBER
+        , HA.rasnum H_rasnum
+        , HA.REINSURECOM H_REINSURECOM
+        , HA.COMCLMPAY H_COMCLMPAY,sics.*
+        FROM sicslife_ceded1.hagp_claim_inward${param2} HA
+        LEFT JOIN sicslife_ceded1.GsicsPL_claim${param2} sics
+        ON (HA.CONTNO=sics.pol_no and instr(sics.CEDENTS_REF,HA.cedents_ref) > 0
+        and substr(ha.CEDANT_CES_NBER,1,4)||ha.CEDANT_CES_NBER=replace(sics.cedant_ces_nber,''_LC'','''')
+        AND HA.rasnum = sics.RASNUM)';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GclaimPL_SICS_to_HA${param2} as
+        SELECT HA.reinsurance_date H_reinsurance_date
+        , HA.Contno H_Contno
+        , HA.cedents_ref H_cedents_ref
+        , HA.CEDANT_CES_NBER H_CEDANT_CES_NBER
+        , HA.rasnum H_rasnum
+        , HA.REINSURECOM H_REINSURECOM
+        , HA.COMCLMPAY H_COMCLMPAY,sics.*
+        FROM sicslife_ceded1.hagp_claim_inward${param2} HA
+        right JOIN sicslife_ceded1.GsicsPL_claim${param2} sics
+        ON (HA.CONTNO=sics.pol_no and instr(sics.CEDENTS_REF,HA.cedents_ref) > 0
+        and substr(ha.CEDANT_CES_NBER,1,4)||ha.CEDANT_CES_NBER=replace(sics.cedant_ces_nber,''_LC'','''')
+        AND HA.rasnum = sics.RASNUM)';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GclaimPL_SICS_to_HA_val${param2} as
+        SELECT t.* from sicslife_ceded1.GclaimPL_SICS_to_HA${param2} t
+        where nvl(t.H_COMCLMPAY,0) &lt;> (-1)*nvl(t.COMCLMPAY,0) and t.h_contno is not null';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GclaimPL_SICS_to_HA_null${param2} as
+        SELECT t.* from sicslife_ceded1.GclaimPL_SICS_to_HA${param2} t
+        where t.h_Contno  is null';
+        execute immediate v_sql;
+
+        v_sql := 'create table sicslife_ceded1.GclaimPL_HA_to_SICS_null${param2} as
+        SELECT t.* from sicslife_ceded1.GclaimPL_HA_to_SICS${param2} t
+        where t.pol_no is null';
+        execute immediate v_sql;
+
+        end;
+    </update>
+</mapper>

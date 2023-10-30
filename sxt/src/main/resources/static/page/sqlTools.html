@@ -17,65 +17,420 @@
             width: 0;
             border-radius: 10px;
         }
-        a:visited {
-            color: dimgray
+        #barButton {
+            white-space: nowrap;
         }
         a{
             font-size: larger;
         }
-        .aDiv{
-            margin: 5px auto
+        a:visited {
+            color: dimgray
         }
         span{
             color: firebrick;
             font-size: larger;
             float: right;
+            white-space: pre-wrap;
+        }
+        .aDiv{
+            margin: 5px auto;
+            overflow: auto;
+        }
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .dialog {
+            background-color: #FFF;
+            padding: 20px;
+            border-radius: 5px;
+            /*width: 300px;*/
+            overflow: auto;
+
+        }
+
+        .form-input {
+            width: 60%;
+            padding: 10px;
+        }
+
+        .form-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #FFF;
+            border: none;
+            cursor: pointer;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: 30px;
+            color: #FFF;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<button onclick="executeAll()" style="font-size: larger;margin: 10px auto">execute all</button>
+<h2 style="color: darkred;text-align: center" >恒安团险抽数接口</h2>
+<hr>
+<div>
+    <h3 style="float: left" onclick="open1a()">1.业务范围匹配&nbsp;&nbsp;</h3>
+    <button id="barButton" onclick="executeAll()" style="font-size: larger;margin: 10px auto;float: left">一键执行</button>
+    <div style="clear: both;"></div>
+</div>
 <div id="progress">
     <div id="bar"></div>
 </div>
 <div>
+    <!--<div class="aDiv">
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" >测试1</a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
+    </div>
     <div class="aDiv">
-        <a id="a1" href="#" onclick="testSend('a1','loading1','ok1','err1','msg1')" style="color: cornflowerblue">团险导数据</a>
-        <img id="loading1" style="display: none" src="/img/loading.gif">
-        <img id="ok1" style="display: none" src="/img/ok.svg">
-        <img id="err1" style="display: none" src="/img/err.svg">
-        <span id="msg1"></span>
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" >测试2k</a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
     </div>
-    <div>
-        <a id="a2" href="#" onclick="testSend('a2','loading2','ok2','err2','msg2')" style="color: cornflowerblue">check校验</a>
-        <img id="loading2" style="display: none" src="/img/loading.gif">
-        <img id="ok2" style="display: none" src="/img/ok.svg">
-        <img id="err2" style="display: none" src="/img/err.svg">
-        <span id="msg2"></span>
+    <div class="aDiv">
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" >测试3</a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
     </div>
+    <div class="aDiv">
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" ><script>alert('as')</>script></a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" >测试5</a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
+    </div>-->
+    <div class="aDiv">
+        <a id="a5" href="#" onclick="send('a5','loading5','ok5','err5','msg5','send5')" >重置PlanNo/SumAtRisk/ORGPlanNo</a>
+        <img id="loading5" style="display: none" src="/img/loading.gif">
+        <img id="ok5" style="display: none" src="/img/ok.svg">
+        <img id="err5" style="display: none" src="/img/err.svg">
+        <span id="msg5"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a6" href="#" onclick="send('a6','loading6','ok6','err6','msg6','send6')" >S业务范围临分</a>
+        <img id="loading6" style="display: none" src="/img/loading.gif">
+        <img id="ok6" style="display: none" src="/img/ok.svg">
+        <img id="err6" style="display: none" src="/img/err.svg">
+        <span id="msg6"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a7" href="#" onclick="send('a7','loading7','ok7','err7','msg7','send7')" >新交易业务范围临分</a>
+        <img id="loading7" style="display: none" src="/img/loading.gif">
+        <img id="ok7" style="display: none" src="/img/ok.svg">
+        <img id="err7" style="display: none" src="/img/err.svg">
+        <span id="msg7"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a8" href="#" onclick="send('a8','loading8','ok8','err8','msg8','send8')" >更新2023.1.1后再保公司交更的方案号</a>
+        <img id="loading8" style="display: none" src="/img/loading.gif">
+        <img id="ok8" style="display: none" src="/img/ok.svg">
+        <img id="err8" style="display: none" src="/img/err.svg">
+        <span id="msg8"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a9" href="#" onclick="send('a9','loading9','ok9','err9','msg9','send9')" >历史Treaty业务范围临分</a>
+        <img id="loading9" style="display: none" src="/img/loading.gif">
+        <img id="ok9" style="display: none" src="/img/ok.svg">
+        <img id="err9" style="display: none" src="/img/err.svg">
+        <span id="msg9"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a10" href="#" onclick="send('a10','loading10','ok10','err10','msg10','send10')" >特殊方案号处理</a>
+        <img id="loading10" style="display: none" src="/img/loading.gif">
+        <img id="ok10" style="display: none" src="/img/ok.svg">
+        <img id="err10" style="display: none" src="/img/err.svg">
+        <span id="msg10"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a11" href="#" onclick="send('a11','loading11','ok11','err11','msg11','send11')" >风险保额匹配</a>
+        <img id="loading11" style="display: none" src="/img/loading.gif">
+        <img id="ok11" style="display: none" src="/img/ok.svg">
+        <img id="err11" style="display: none" src="/img/err.svg">
+        <span id="msg11"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a12" href="#" onclick="send('a12','loading12','ok12','err12','msg12','send12')" >特殊风险保额处理</a>
+        <img id="loading12" style="display: none" src="/img/loading.gif">
+        <img id="ok12" style="display: none" src="/img/ok.svg">
+        <img id="err12" style="display: none" src="/img/err.svg">
+        <span id="msg12"></span>
+    </div>
+
+    <div class="aDiv">
+        <a id="a13" href="#" onclick="send('a13','loading13','ok13','err13','msg13','send13')" >TreatyPlanNo置NOTSPEC</a>
+        <img id="loading13" style="display: none" src="/img/loading.gif">
+        <img id="ok13" style="display: none" src="/img/ok.svg">
+        <img id="err13" style="display: none" src="/img/err.svg">
+        <span id="msg13"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a14" href="#" onclick="send('a14','loading14','ok14','err14','msg14','send14')" >Mid表PlanNo校验</a>
+        <img id="loading14" style="display: none" src="/img/loading.gif">
+        <img id="ok14" style="display: none" src="/img/ok.svg">
+        <img id="err14" style="display: none" src="/img/err.svg">
+        <span id="msg14"></span>
+    </div><hr>
+    <h3>2.拆分</h3>
+    <div class="aDiv">
+        <a id="a16" href="#" onclick="send('a16','loading16','ok16','err16','msg16','send16')" style="color: cornflowerblue">自动拆分并生成模板交易表</a>
+        <img id="loading16" style="display: none" src="/img/loading.gif">
+        <img id="ok16" style="display: none" src="/img/ok.svg">
+        <img id="err16" style="display: none" src="/img/err.svg">
+        <span id="msg16"></span>
+    </div>
+    <div class="aDiv">
+        <a id="a17" href="#" onclick="send('a17','loading17','ok17','err17','msg17','send17')" style="color: cornflowerblue">拆分G_SPLIT_00NB_UPLOAD表</a>
+        <img id="loading17" style="display: none" src="/img/loading.gif">
+        <img id="ok17" style="display: none" src="/img/ok.svg">
+        <img id="err17" style="display: none" src="/img/err.svg">
+        <span id="msg17"></span>
+    </div>
+    <div class="aDiv" >
+
+        <a id="a18" href="#"  onclick="sendDialog('a18','loading18','ok18','err18','msg18','send18','单个批次最大数量')" style="color: cornflowerblue">拆分RPO(Birth)</a>
+        <img id="loading18" style="display: none" src="/img/loading.gif">
+        <img id="ok18" style="display: none" src="/img/ok.svg">
+        <img id="err18" style="display: none" src="/img/err.svg">
+    </div>
+
 </div>
+
 
 
 <script>
 
-
-
     let executeAll = async () => {
-        const threadNum = 3
+        const threadNum = 10
         const addNum = Math.floor(10000/threadNum)/100
         let currentProgress = 0.00
+        unbuttonShow()
         progressBar(currentProgress)
-        if (await testSend('a1','loading1','ok1','err1','msg1')){
+        if (await send('a5', 'loading5', 'ok5', 'err5', 'msg5', 'send5')) {
             currentProgress += addNum
             progressBar(currentProgress)
-            if (await testSend('a2','loading2','ok2','err2','msg2')){
+            if (await send('a6', 'loading6', 'ok6', 'err6', 'msg6', 'send6')) {
                 currentProgress += addNum
                 progressBar(currentProgress)
+                if (await send('a7', 'loading7', 'ok7', 'err7', 'msg7', 'send7')) {
+                    currentProgress += addNum
+                    progressBar(currentProgress)
+                    if (await send('a8', 'loading8', 'ok8', 'err8', 'msg8', 'send8')) {
+                        currentProgress += addNum
+                        progressBar(currentProgress)
+                        if (await send('a9', 'loading9', 'ok9', 'err9', 'msg9', 'send9')) {
+                            currentProgress += addNum
+                            progressBar(currentProgress)
+                            if (await send('a10', 'loading10', 'ok10', 'err10', 'msg10', 'send10')) {
+                                currentProgress += addNum
+                                progressBar(currentProgress)
+                                if (await send('a11', 'loading11', 'ok11', 'err11', 'msg11', 'send11')) {
+                                    currentProgress += addNum
+                                    progressBar(currentProgress)
+                                    if (await send('a12', 'loading12', 'ok12', 'err12', 'msg12', 'send12')) {
+                                        currentProgress += addNum
+                                        progressBar(currentProgress)
+                                        if (await send('a13', 'loading13', 'ok13', 'err13', 'msg13', 'send13')) {
+                                            currentProgress += addNum
+                                            progressBar(currentProgress)
+                                            if (await send('a14', 'loading14', 'ok14', 'err14', 'msg14', 'send14')) {
+                                                currentProgress += addNum
+                                                progressBar(currentProgress)
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
+        buttonShow()
     }
-    let testSend = async (aId,lId, oId, eId,mID) => {
+
+    let test1c1 = () => {
+        axios({
+            method: 'post',
+            url: '/c1'
+        }).then((req) => {
+            //showMsg('mc1', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let bs = () => {
+        axios({
+            method: 'post',
+            url: '/bs'
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let sc = () => {
+        axios({
+            method: 'post',
+            url: '/sc'
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let dbdx = () => {
+        axios({
+            method: 'post',
+            url: '/db',
+            data: {
+                table: 'test',
+                date: null
+            },
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let db = (date) => {
+        axios({
+            method: 'post',
+            url: '/db',
+            data: {
+                table: null,
+                date: date
+            },
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+
+    let ss = () => {
+        axios({
+            method: 'post',
+            url: '/ss'
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let test1t1 = () => {
+        axios({
+            method: 'post',
+            url: '/t1'
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    let send1 = () => {
+        axios({
+            method: 'get',
+            url: '/send1'
+        }).then((req) => {
+            //showMsg('mc0', req.data.msg+'/'+ JSON.stringify(req.data.data))
+        }).catch(err => {
+            alert(err)
+        })
+    }
+
+    const upe = async () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx, .xls'; // 只允许选择 .xlsx 和 .xls 类型的文件
+        input.onchange = async () => {
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await axios.post('/upE', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log('File uploaded successfully');
+                return response.data;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        input.click();
+    };
+
+
+
+    let close1a = () => {
+        unaShow('a5')
+        unaShow('a6')
+        unaShow('a7')
+        unaShow('a8')
+        unaShow('a9')
+        unaShow('a10')
+        unaShow('a11')
+        unaShow('a12')
+        unaShow('a13')
+        unaShow('a14')
+    }
+
+    let open1a = () => {
+        aShow('a5')
+        aShow('a6')
+        aShow('a7')
+        aShow('a8')
+        aShow('a9')
+        aShow('a10')
+        aShow('a11')
+        aShow('a12')
+        aShow('a13')
+        aShow('a14')
+    }
+
+
+    let send = async (aId,lId, oId, eId,mID,url,param) => {
         let progress = false
         unaShow(aId)
         unShowMsg(mID)
@@ -84,7 +439,10 @@
         show(lId)
         await axios({
             method: 'get',
-            url: 'LFBusiness',
+            url: url,
+            params: {
+                param: param
+            }
         }).then((req) => {
             unShow(lId)
             if (req.data.code === '0') {
@@ -92,10 +450,11 @@
                 progress = true
 
             } else {
+                aShow(aId)
                 show(eId)
                 progress = false
             }
-            showMsg(mID,req.data.aaa)
+            showMsg(mID, req.data.msg + ' 耗时: ' + req.data.time + 's')
         }).catch(err => {
             unShow(lId)
             show(eId)
@@ -112,11 +471,17 @@
 
     let unShow = (id) => {
         //document.getElementById("loading1").getAttributeNode("style").value = "visibility: visible/hidden"
-        document.getElementById(id).getAttributeNode("style").value = "display: none"
+        //document.getElementById(id).getAttributeNode("style").value = "display: none"
+        document.getElementById(id).style.cssText = 'display: none'
     }
 
+    let aShow = (id) => {
+        document.getElementById(id).getAttributeNode("style").value = "pointer-events: auto"
+        document.getElementById(id).getAttributeNode("style").value = "color: firebrick"
+    }
     let unaShow = (id) => {
-        document.getElementById(id).getAttributeNode("style").value = "pointer-events: none"
+        //document.getElementById(id).getAttributeNode("style").value = "pointer-events: none"
+        document.getElementById(id).style.cssText = 'pointer-events: none'
     }
 
     let showMsg = (id,msg) => {
@@ -127,10 +492,65 @@
         document.getElementById(id).innerHTML = ''
     }
 
+    let unbuttonShow = () => {
+        document.getElementById("barButton").disabled = true
+    }
+
+    let buttonShow = () => {
+        document.getElementById("barButton").disabled = false
+    }
+
     let progressBar = (percent) => {
         const bar = document.getElementById("bar");
         bar.style.width = `${percent}%`;
     }
+
+    let sendDialog = async (aId,lId, oId, eId,mID,url,msg) => {
+        const dialogOverlay = document.createElement('div');
+        dialogOverlay.classList.add('dialog-overlay');
+
+        const dialog = document.createElement('div');
+        dialog.classList.add('dialog');
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('close-button');
+        closeButton.innerHTML = '&times;';
+        closeButton.addEventListener('click', function() {
+            dialogOverlay.remove();
+        });
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.placeholder = msg;
+        input.classList.add('form-input');
+
+        const submitButton = document.createElement('button');
+        submitButton.type = 'submit';
+        submitButton.textContent = '提交';
+        submitButton.style.cssText = 'float: right';
+        submitButton.classList.add('form-button');
+
+        const textSpan = document.createElement('span');
+        textSpan.style.cssText = 'float: left;margin-top: 10px';
+        textSpan.id = mID
+
+        dialog.appendChild(input);
+        dialog.appendChild(submitButton);
+        dialog.appendChild(closeButton);
+        dialog.appendChild(textSpan);
+
+        dialogOverlay.appendChild(dialog);
+        document.body.appendChild(dialogOverlay);
+
+        submitButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const inputValue = input.value;
+            await send(aId, lId, oId, eId, mID, url, inputValue)
+            //dialogOverlay.remove();
+        });
+    }
+
+    window.onload = () => close1a()
 </script>
 </body>
 </html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sics.sxt.dao.GTPlanMappingMapper">
+    <update id="updatePlanNo" parameterType="com.sics.sxt.pojo.dto.GTPlanMapping">
+        UPDATE group_cession_upload_mid t
+        SET t.planno=#{receptNo}
+        WHERE
+         t.planno IS NULL
+        AND to_date( t.TRANS_EFFECTIVE_DATE, 'yyyy/MM/dd' ) >= #{prevaliDate}
+        AND to_date( t.TRANS_EFFECTIVE_DATE, 'yyyy/MM/dd' ) &lt;= #{preinvaliDate}
+        <if test="@org.springframework.util.StringUtils@hasText(allValue)">
+            AND ${allValue}
+        </if>
+        <if test="@org.springframework.util.StringUtils@hasText(leftValue)">
+            AND ${leftValue} = #{rightValue}
+        </if>
+    </update>
+
+
+
+</mapper>
