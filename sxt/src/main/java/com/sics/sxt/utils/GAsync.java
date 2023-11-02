@@ -10,9 +10,9 @@ import java.util.concurrent.*;
 @Component
 public class GAsync {
 
-    private static final Integer corePoolSize = 1;
+    private static final Integer corePoolSize = 100;
 
-    private static final Integer maximumPoolSize = 5;
+    private static final Integer maximumPoolSize = 100;
 
     private static final Long keepAliveTime = 1L;
 

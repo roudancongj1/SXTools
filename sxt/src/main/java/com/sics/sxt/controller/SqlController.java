@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.sics.sxt.dao.CommonMapper;
 import com.sics.sxt.pojo.vo.R;
+import com.sics.sxt.utils.GAsync;
 import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.driver.OracleDriver;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,10 +17,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 @Slf4j
 @RestController
@@ -75,7 +76,31 @@ public class SqlController {
     public R send5(){
         try {
             log.info("==> 重置 PlanNo/SumAtRisk/ORGPlanNo 接口开始执行......");
-            Thread.sleep(3000);
+
+
+
+            Thread.ofVirtual().name("virtual thread").start(() ->
+                log.info("你好, 虚拟线程!"));
+
+
+           for (int i = 0; i < 100; i++) {
+               int finalI = i;
+               GAsync.run(()->{
+                   ExecutorService service = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("虚拟---"+finalI).factory());
+                   for (int j = 0; j < 10; j++) {
+                       int finalj = j;
+                       service.submit(()->{
+                           try {
+                               Thread.sleep(3000);
+                           } catch (InterruptedException e) {
+                               throw new RuntimeException(e);
+                           }
+                           log.info("虚拟线程执行完毕-----"+ finalj +"-------------------");});
+                   }
+                   log.info("执行完毕-----"+ finalI +"-------------------");});
+           }
+
+            //Thread.sleep(3000);
             return R.ok("请求成功 重置 "+ 1+ " 条");
         } catch (Exception e) {
             log.error("程序异常",e);
